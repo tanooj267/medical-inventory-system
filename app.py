@@ -13,6 +13,7 @@ from datetime import timedelta
 import os
 import pymysql
 pymysql.install_as_MySQLdb()
+from flask_mail import Mail, Message
 
 
 # Debug print to confirm file execution
@@ -73,11 +74,24 @@ def create_connection():
         )
 
     return connection
+
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+
+mail = Mail(app)
+
+
 def send_email_notification(item_name, quantity, limit):
 
-    subject = "Medical Inventory Alert"
+    try:
 
-    body = f"""
+        subject = "Medical Inventory Alert"
+
+        body = f"""
 ALERT: Medicine stock is below the limit.
 
 Medicine: {item_name}
@@ -87,23 +101,21 @@ Limit: {limit}
 Please restock immediately.
 """
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = EMAIL_ADDRESS
-    msg["To"] = RECEIVER_EMAIL
+        msg = Message(
+            subject=subject,
+            sender=os.getenv("MAIL_USERNAME"),
+            recipients=[RECEIVER_EMAIL]
+        )
 
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_ADDRESS, RECEIVER_EMAIL, msg.as_string())
-        server.quit()
+        msg.body = body
 
-        print("Email alert sent")
+        mail.send(msg)
+
+        print("Email alert sent successfully")
 
     except Exception as e:
-        print("Email error:", e)
 
+        print("Email error:", e)
 def load_user_data():
     """Load user data from the users table."""
     connection = create_connection()
