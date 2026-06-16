@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Medicine Demand Prediction</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background-color:#f4f6f9;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    width:700px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+form{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+input[type="number"]{
+    padding:8px;
+    width:200px;
+    margin-left:10px;
+}
+
+button{
+    padding:8px 15px;
+    background:#007BFF;
+    color:white;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    margin-left:10px;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+table th{
+    background:#007BFF;
+    color:white;
+    padding:10px;
+}
+
+table td{
+    padding:10px;
+    text-align:center;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f1f1f1;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Medicine Demand Prediction (Random Forest)</h1>
+
+<form method="POST">
+
+<label>Medicine Item ID:</label>
+
+<input type="number" name="item_id" required>
+
+<button type="submit">Predict</button>
+
+</form>
+
+{% if prediction %}
+
+<h2 style="text-align:center;">Predicted Demand for Next 7 Days</h2>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Predicted Demand</th>
+</tr>
+
+{% for p in prediction %}
+
+<tr>
+<td>{{ p.date }}</td>
+<td>{{ p.predicted_demand }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

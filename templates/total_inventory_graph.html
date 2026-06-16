@@ -1,0 +1,7 @@
+<h2>Total Medicine Inventory</h2>
+
+{% if graph_html %}
+    {{ graph_html | safe }}
+{% else %}
+    <p>No inventory data available.</p>
+{% endif %}

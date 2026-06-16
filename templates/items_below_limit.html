@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items Below Alert Limit</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/itemsbelow.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Items Below Alert Limit</h1>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+<tr>
+<th>Medicine Name</th>
+<th>Total Quantity</th>
+<th>Alert Limit</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% if items %}
+
+{% for item in items %}
+
+<tr>
+<td>{{ item.medicine_name }}</td>
+<td>{{ item.total_quantity }}</td>
+<td>{{ item.quantity_limit }}</td>
+</tr>
+
+{% endfor %}
+
+{% else %}
+
+<tr>
+<td colspan="3">No medicines below alert limit found.</td>
+</tr>
+
+{% endif %}
+
+</tbody>
+
+</table>
+
+</div>
+
+<br>
+
+<div style="text-align:center;">
+<a href="{{ url_for('index') }}">Back to Dashboard</a>
+</div>
+
+</div>
+
+</body>
+</html>

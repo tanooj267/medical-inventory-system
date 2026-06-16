@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set Medicine Limit</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/itemsbelow.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Set Medicine Quantity Limit</h1>
+
+<div class="form-container">
+
+<form method="POST">
+
+<div class="form-group">
+<label>Medicine Name</label>
+<input type="text" name="item_name" required>
+</div>
+
+<div class="form-group">
+<label>Quantity Limit</label>
+<input type="number" name="quantity_limit" required>
+</div>
+
+<div class="form-group">
+<button type="submit">Save Limit</button>
+</div>
+
+</form>
+
+</div>
+
+<br>
+
+<div style="text-align:center;">
+<a href="{{ url_for('index') }}">Back to Dashboard</a>
+</div>
+
+</div>
+
+</body>
+</html>

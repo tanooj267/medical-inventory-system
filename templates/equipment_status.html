@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Equipment Status</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background-color:#f4f6f9;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    width:900px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+h2, h3{
+    margin-top:25px;
+}
+
+form{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+label{
+    font-weight:bold;
+}
+
+input[type="text"]{
+    padding:8px;
+    width:250px;
+    margin-left:10px;
+}
+
+button{
+    padding:8px 15px;
+    background:#007BFF;
+    color:white;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    margin-left:10px;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+table th{
+    background:#007BFF;
+    color:white;
+    padding:10px;
+}
+
+table td{
+    padding:10px;
+    text-align:center;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f1f1f1;
+}
+
+a{
+    display:inline-block;
+    margin-top:20px;
+    text-decoration:none;
+    color:#007BFF;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Check Equipment Status</h1>
+
+<form method="POST" action="{{ url_for('equipment_status') }}">
+
+<label>Enter Equipment Name:</label>
+<input type="text" name="equipment_name" required>
+
+<button type="submit">Search</button>
+
+</form>
+
+{% if total_available is not none %}
+
+<h2>Total Equipment Available: {{ total_available }}</h2>
+
+<h3>Equipment Details</h3>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Quantity</th>
+<th>Manufacturer</th>
+<th>Manufacture Date</th>
+<th>Status</th>
+</tr>
+
+{% for e in equipment_list %}
+
+<tr>
+<td>{{ e.equipment_id }}</td>
+<td>{{ e.equipment_name }}</td>
+<td>{{ e.quantity }}</td>
+<td>{{ e.manufacturer }}</td>
+<td>{{ e.purchase_date }}</td>
+<td>{{ e.status }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<h3>Doctors Using This Equipment</h3>
+
+<table>
+
+<tr>
+<th>Doctor ID</th>
+<th>Equipment Used</th>
+<th>Manufacture Date</th>
+<th>Issued Date</th>
+</tr>
+
+{% for u in usage_list %}
+
+<tr>
+<td>{{ u.doctor_id }}</td>
+<td>{{ u.equipment_needed }}</td>
+<td>{{ u.purchase_date }}</td>
+<td>{{ u.usage_date }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endif %}
+
+<a href="{{ url_for('index') }}">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

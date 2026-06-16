@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Medical Equipment Management</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background-color:#f4f6f9;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    width:800px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+h2{
+    margin-top:20px;
+}
+
+form{
+    margin-bottom:30px;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+input, select{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+}
+
+button{
+    margin-top:15px;
+    padding:10px;
+    width:150px;
+    background:#007BFF;
+    color:white;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+table th{
+    background:#007BFF;
+    color:white;
+    padding:10px;
+}
+
+table td{
+    padding:10px;
+    text-align:center;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f1f1f1;
+}
+
+a{
+    display:inline-block;
+    margin-top:20px;
+    text-decoration:none;
+    color:#007BFF;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Medical Equipment Management</h1>
+
+<h2>Add Equipment</h2>
+
+<form method="POST" action="{{ url_for('manage_equipment') }}">
+
+<label>Equipment Name:</label>
+<input type="text" name="equipment_name" required>
+
+<label>Quantity:</label>
+<input type="number" name="quantity" required>
+
+<label>Manufacturer:</label>
+<input type="text" name="manufacturer" required>
+
+<label>Manufacture / Purchase Date:</label>
+<input type="date" name="purchase_date" required>
+
+<label>Status:</label>
+<select name="status">
+<option value="Available">Available</option>
+<option value="Maintenance">Maintenance</option>
+<option value="In Use">In Use</option>
+</select>
+
+<button type="submit">Add Equipment</button>
+
+</form>
+
+<hr>
+
+<h2>Equipment List</h2>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Quantity</th>
+<th>Manufacturer</th>
+<th>Manufacture Date</th>
+<th>Status</th>
+</tr>
+
+{% for e in equipment %}
+
+<tr>
+<td>{{ e.equipment_id }}</td>
+<td>{{ e.equipment_name }}</td>
+<td>{{ e.quantity }}</td>
+<td>{{ e.manufacturer }}</td>
+<td>{{ e.purchase_date }}</td>
+<td>{{ e.status }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<a href="{{ url_for('index') }}">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

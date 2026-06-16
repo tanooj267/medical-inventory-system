@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Update Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkinvo.css') }}">
+
+    <style>
+
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        input, select {
+            padding: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            background: blue;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h2>Update Inventory</h2>
+
+    {% if error %}
+
+        <p class="error">
+            {{ error }}
+        </p>
+
+    {% endif %}
+
+    <!-- SEARCH FORM -->
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="item_id"
+            placeholder="Enter Item ID">
+
+        <input
+            type="text"
+            name="item_name"
+            placeholder="Enter Item Name">
+
+        <button
+            type="submit"
+            name="search"
+            class="search-btn">
+
+            Search
+
+        </button>
+
+    </form>
+
+    <!-- INVENTORY TABLE -->
+
+    {% if inventory_rows %}
+
+    <form method="POST">
+
+        <table>
+
+            <tr>
+
+                <th>Select</th>
+
+                <th>Inventory ID</th>
+
+                <th>Item ID</th>
+
+                <th>Medicine Name</th>
+
+                <th>Expiry Date</th>
+
+                <th>Unit Price</th>
+
+                <th>Current Quantity</th>
+
+                <th>Action</th>
+
+                <th>Quantity</th>
+
+            </tr>
+
+            {% for item in inventory_rows %}
+
+            <tr>
+
+                <td>
+
+                    <input
+                        type="checkbox"
+                        name="inventory_id"
+                        value="{{ item.inventory_id }}">
+
+                </td>
+
+                <td>
+                    {{ item.inventory_id }}
+                </td>
+
+                <td>
+                    {{ item.item_id }}
+                </td>
+
+                <td>
+                    {{ item.medicine_name }}
+                </td>
+
+                <td>
+                    {{ item.expiry_date }}
+                </td>
+
+                <td>
+                    ₹{{ item.unit_price }}
+                </td>
+
+                <td>
+                    <b>{{ item.quantity }}</b>
+                </td>
+
+                <td>
+
+                    <select
+                        name="action_{{ item.inventory_id }}">
+
+                        <option value="add">
+                            Add
+                        </option>
+
+                        <option value="remove">
+                            Remove
+                        </option>
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <input
+                        type="number"
+                        name="quantity_{{ item.inventory_id }}"
+                        min="1">
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        <br>
+
+        <button
+            type="submit"
+            name="update">
+
+            Update Inventory
+
+        </button>
+
+    </form>
+
+    {% endif %}
+
+</body>
+
+</html>
+```
