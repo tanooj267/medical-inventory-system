@@ -23,8 +23,7 @@ print("DEBUG: Running Tanooj's Full Working app.py -", datetime.now())
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-EMAIL_ADDRESS = "tanoojvardhan267@gmail.com"
-EMAIL_PASSWORD = "xfxqvfflinxhaogc"
+
 RECEIVER_EMAIL = "cse22031@iiitkalyani.ac.in"
 
 app.config['MYSQL_HOST'] = os.getenv("MYSQLHOST")
@@ -41,6 +40,14 @@ db_config = {
         'database': app.config['MYSQL_DB'],
         'port': app.config['MYSQL_PORT']
     }
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+app.config['MAIL_DEBUG'] = True
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
+mail = Mail(app)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -76,22 +83,21 @@ def create_connection():
     return connection
 
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
-app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
-
-mail = Mail(app)
 
 
 def send_email_notification(item_name, quantity, limit):
 
     try:
 
-        subject = "Medical Inventory Alert"
+        print("Starting email notification...")
 
-        body = f"""
+        msg = Message(
+            subject="Medical Inventory Alert",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[RECEIVER_EMAIL]
+        )
+
+        msg.body = f"""
 ALERT: Medicine stock is below the limit.
 
 Medicine: {item_name}
@@ -101,21 +107,19 @@ Limit: {limit}
 Please restock immediately.
 """
 
-        msg = Message(
-            subject=subject,
-            sender=os.getenv("MAIL_USERNAME"),
-            recipients=[RECEIVER_EMAIL]
-        )
+        with app.app_context():
 
-        msg.body = body
+            mail.send(msg)
 
-        mail.send(msg)
+        print("Email sent successfully")
 
-        print("Email alert sent successfully")
+        return True
 
     except Exception as e:
 
-        print("Email error:", e)
+        print("EMAIL ERROR:", str(e))
+
+        return False
 def load_user_data():
     """Load user data from the users table."""
     connection = create_connection()
@@ -958,11 +962,13 @@ def check_medicine_stock(item_name):
 
         if total_quantity < quantity_limit:
 
-            send_email_notification(
-                item_name,
-                total_quantity,
-                quantity_limit
-            )
+            email_status = send_email_notification(
+                                item_name,
+                                total_quantity,
+                                quantity_limit
+                            )
+
+            print("Email status:", email_status)
 def predict_demand_random_forest(item_id, days_to_predict=7):
 
     conn = create_connection()
