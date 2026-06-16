@@ -83,8 +83,6 @@ def create_connection():
     return connection
 
 
-
-
 def send_email_notification(item_name, quantity, limit):
 
     try:
@@ -107,19 +105,13 @@ Limit: {limit}
 Please restock immediately.
 """
 
-        with app.app_context():
-
-            mail.send(msg)
+        mail.send(msg)
 
         print("Email sent successfully")
-
-        return True
 
     except Exception as e:
 
         print("EMAIL ERROR:", str(e))
-
-        return False
 def load_user_data():
     """Load user data from the users table."""
     connection = create_connection()
@@ -918,57 +910,78 @@ def update_inventory_form():
         'update_inventory_form.html',
         inventory_rows=[]
     )
-
 def check_medicine_stock(item_name):
 
-    conn = create_connection()
+    try:
 
-    cursor = conn.cursor(dictionary=True)
+        conn = create_connection()
 
-    cursor.execute(
-        """
-        SELECT
-            current_stock
-        FROM medicines
-        WHERE medicine_name=%s
-        """,
-        (item_name,)
-    )
+        if conn is None:
+            return
 
-    result = cursor.fetchone()
+        cursor = conn.cursor(dictionary=True)
 
-    total_quantity = (
-        result['current_stock']
-        if result else 0
-    )
+        cursor.execute(
+            """
+            SELECT current_stock
+            FROM medicines
+            WHERE medicine_name=%s
+            """,
+            (item_name,)
+        )
 
-    cursor.execute(
-        """
-        SELECT quantity_limit
-        FROM medicine_limits
-        WHERE item_name=%s
-        """,
-        (item_name,)
-    )
+        result = cursor.fetchone()
 
-    limit_data = cursor.fetchone()
+        total_quantity = (
+            result['current_stock']
+            if result else 0
+        )
 
-    cursor.close()
-    conn.close()
+        cursor.execute(
+            """
+            SELECT quantity_limit
+            FROM medicine_limits
+            WHERE item_name=%s
+            """,
+            (item_name,)
+        )
 
-    if limit_data:
+        limit_data = cursor.fetchone()
 
-        quantity_limit = limit_data['quantity_limit']
+        cursor.close()
+        conn.close()
 
-        if total_quantity < quantity_limit:
+        if limit_data:
 
-            email_status = send_email_notification(
-                                item_name,
-                                total_quantity,
-                                quantity_limit
-                            )
+            quantity_limit = limit_data['quantity_limit']
 
-            print("Email status:", email_status)
+            if total_quantity < quantity_limit:
+
+                print(
+                    f"LOW STOCK ALERT: "
+                    f"{item_name} | "
+                    f"{total_quantity} < {quantity_limit}"
+                )
+
+                # SAFE EMAIL CALL
+                try:
+
+                    send_email_notification(
+                        item_name,
+                        total_quantity,
+                        quantity_limit
+                    )
+
+                except Exception as email_error:
+
+                    print(
+                        "EMAIL FAILED:",
+                        str(email_error)
+                    )
+
+    except Exception as e:
+
+        print("STOCK CHECK ERROR:", str(e))
 def predict_demand_random_forest(item_id, days_to_predict=7):
 
     conn = create_connection()
