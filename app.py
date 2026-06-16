@@ -876,10 +876,11 @@ def update_inventory_form():
 
                 for medicine_name in updated_medicines:
 
-                    check_medicine_stock(
-                        medicine_name
-                    )
+                    try:
+                        check_medicine_stock(medicine_name)
 
+                    except Exception as e:
+                        print(f"Stock alert error: {e}")
                 return redirect(
                     url_for('update_inventory_form')
                 )
