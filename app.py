@@ -28,11 +28,12 @@ RECEIVER_EMAIL = "cse22031@iiitkalyani.ac.in"
 
 # MySQL configuration
 db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '123456789',
-    'database': 'medical_inventory'
-}
+        'host': app.config['MYSQL_HOST'],
+        'user': app.config['MYSQL_USER'],
+        'password': app.config['MYSQL_PASSWORD'],
+        'database': app.config['MYSQL_DB'],
+        'port': app.config['MYSQL_PORT']
+    }
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
