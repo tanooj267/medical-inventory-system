@@ -21,6 +21,7 @@ print("DEBUG: Running Tanooj's Full Working app.py -", datetime.now())
 # Initialize Flask app
 app = Flask(__name__)
 resend.api_key = os.getenv("RESEND_API_KEY")
+print("RESEND API:", resend.api_key)
 app.secret_key = 'your_secret_key'
 
 
@@ -75,39 +76,32 @@ def create_connection():
 
     return connection
 
-
 def send_email_notification(item_name, quantity, limit):
 
     try:
 
-        resend.Emails.send({
+        response = resend.Emails.send({
 
             "from": "onboarding@resend.dev",
 
-            "to": [RECEIVER_EMAIL],
+            "to": ["tanoojvardhan267@gmail.com"],
 
             "subject": "Medical Inventory Alert",
 
             "html": f"""
             <h2>Low Stock Alert</h2>
 
-            <p>
-            <b>Medicine:</b> {item_name}
-            </p>
+            <p><b>Medicine:</b> {item_name}</p>
 
-            <p>
-            <b>Current Quantity:</b> {quantity}
-            </p>
+            <p><b>Current Quantity:</b> {quantity}</p>
 
-            <p>
-            <b>Limit:</b> {limit}
-            </p>
+            <p><b>Limit:</b> {limit}</p>
 
-            <p>
-            Please restock immediately.
-            </p>
+            <p>Please restock immediately.</p>
             """
         })
+
+        print("RESEND RESPONSE:", response)
 
         print("Email sent successfully")
 
