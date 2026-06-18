@@ -5,15 +5,14 @@ from mysql.connector import Error
 import plotly.express as px
 import logging
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from datetime import timedelta
 import os
 import pymysql
 pymysql.install_as_MySQLdb()
-from flask_mail import Mail, Message
+import resend
+
 
 
 # Debug print to confirm file execution
@@ -21,6 +20,7 @@ print("DEBUG: Running Tanooj's Full Working app.py -", datetime.now())
 
 # Initialize Flask app
 app = Flask(__name__)
+resend.api_key = os.getenv("RESEND_API_KEY")
 app.secret_key = 'your_secret_key'
 
 
@@ -40,14 +40,7 @@ db_config = {
         'database': app.config['MYSQL_DB'],
         'port': app.config['MYSQL_PORT']
     }
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
-app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
-app.config['MAIL_DEBUG'] = True
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
-mail = Mail(app)
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -87,31 +80,44 @@ def send_email_notification(item_name, quantity, limit):
 
     try:
 
-        print("Starting email notification...")
+        resend.Emails.send({
 
-        msg = Message(
-            subject="Medical Inventory Alert",
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[RECEIVER_EMAIL]
-        )
+            "from": "onboarding@resend.dev",
 
-        msg.body = f"""
-ALERT: Medicine stock is below the limit.
+            "to": [RECEIVER_EMAIL],
 
-Medicine: {item_name}
-Current Quantity: {quantity}
-Limit: {limit}
+            "subject": "Medical Inventory Alert",
 
-Please restock immediately.
-"""
+            "html": f"""
+            <h2>Low Stock Alert</h2>
 
-        mail.send(msg)
+            <p>
+            <b>Medicine:</b> {item_name}
+            </p>
+
+            <p>
+            <b>Current Quantity:</b> {quantity}
+            </p>
+
+            <p>
+            <b>Limit:</b> {limit}
+            </p>
+
+            <p>
+            Please restock immediately.
+            </p>
+            """
+        })
 
         print("Email sent successfully")
+
+        return True
 
     except Exception as e:
 
         print("EMAIL ERROR:", str(e))
+
+        return False
 def load_user_data():
     """Load user data from the users table."""
     connection = create_connection()
